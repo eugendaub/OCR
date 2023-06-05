@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Ionic OCR
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-img [src]="imageUrl"></ion-img>
+
+  <ion-button expand="full" (click)="captureImage()">Capture Image</ion-button>
+  <ion-button expand="full" (click)="recognizeImage()" [disabled]="!workerReady">Start OCR</ion-button>
+
+  <ion-card *ngIf="workerReady && captureProgress > 0">
+    <ion-card-header>
+      <ion-card-title>
+        Capture progress: {{ captureProgress }}%
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      {{ ocrResult }}
+    </ion-card-content>
+  </ion-card>
+
+  <div>
+    <textarea [(ngModel)]="text" placeholder="Text eingeben"></textarea>
+    <button (click)="parseText()">Text analysieren</button>
+  </div>
+  <div *ngIf="result">
+    <h4>Ergebnis:</h4>
+    <ul>
+      <li *ngFor="let keyword of keywords">{{ keyword }}: {{ result[keyword] }}</li>
+    </ul>
+  </div>
+
+  <form (ngSubmit)="saveData()">
+
+    <ion-item>
+      <ion-label position="floating">ApiKey: </ion-label>
+      <ion-input [(ngModel)]="apiKey" name="apiKey" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">AuthDomain: </ion-label>
+      <ion-input [(ngModel)]="authDomain" name="authDomain" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">ProjectId: </ion-label>
+      <ion-input [(ngModel)]="projectId" name="projectId" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">StorageBucket: </ion-label>
+      <ion-input [(ngModel)]="storageBucket" name="storageBucket" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">MessagingSenderId: </ion-label>
+      <ion-input [(ngModel)]="messagingSenderId" name="messagingSenderId" type="text"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">AppId: </ion-label>
+      <ion-input [(ngModel)]="appId" name="appId" type="text"></ion-input>
+    </ion-item>
+    <ion-button type="submit" expand="full" class="buttonsjopta" color="#a2d2ff">Save Firebase Settings</ion-button>
+  </form>
+
+</ion-content>
