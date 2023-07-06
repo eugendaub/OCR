@@ -10,28 +10,26 @@
   <ion-img [src]="imageUrl"></ion-img>
 
   <ion-button expand="full" (click)="captureImage()">Capture Image</ion-button>
-  <ion-button expand="full" (click)="recognizeImage()" [disabled]="!workerReady">Start OCR</ion-button>
+  <ion-button expand="full" (click)="recognizeImage()" [disabled]="!workerReady">Start OCR {{ captureProgress }}</ion-button>
 
-  <ion-card *ngIf="workerReady && captureProgress > 0">
+  <!--<ion-card *ngIf="workerReady && captureProgress > 0">
     <ion-card-header>
       <ion-card-title>
         Capture progress: {{ captureProgress }}%
       </ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      {{ ocrResult }}
-    </ion-card-content>
-  </ion-card>
+  </ion-card>-->
+  <div class="player">
+    <div class="progress-bar">
+      <div class="progress"  [style.width]="captureProgress + '%'" ></div>
+    </div>
 
-  <div>
-    <textarea [(ngModel)]="text" placeholder="Text eingeben"></textarea>
-    <button (click)="parseText()">Text analysieren</button>
   </div>
-  <div *ngIf="result">
-    <h4>Ergebnis:</h4>
+
+  <div >
     <pre>{{ocrResult}}</pre>
   </div>
-  <ion-button (click)="editData()">Load Data</ion-button>
+
 
   <form (ngSubmit)="saveData()">
 
@@ -59,9 +57,10 @@
       <ion-label position="floating">AppId: </ion-label>
       <ion-input [(ngModel)]="appId" name="appId" type="text"></ion-input>
     </ion-item>
-    <ion-button type="submit" expand="full" class="buttonsjopta" color="#a2d2ff">Save Firebase Settings</ion-button>
+    <ion-button type="submit" expand="full" class="buttonsjopta" >Save Firebase Settings</ion-button>
   </form>
 
-  <ion-button (click)="createFolder2()">Folder erstellen</ion-button>
+  <ion-button expand="full" (click)="editData()">Load Data</ion-button>
+  <ion-button expand="full" (click)="createFolder()">Create Folder</ion-button>
 
 </ion-content>

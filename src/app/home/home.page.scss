@@ -25,3 +25,24 @@
 #container a {
   text-decoration: none;
 }
+.player {
+  height: 3px;
+  background: var(--ion-color-medium);
+  img {
+    height: 55px;
+  }
+  font-family: 'Spotify';
+  color: #fff;
+  font-size: small;
+
+  .progress-bar {
+    height: 3px;
+    width: 100%;
+    background: #707070;
+
+    .progress {
+      background: #57b660;
+      height: 100%;
+    }
+  }
+}

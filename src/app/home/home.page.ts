@@ -18,7 +18,7 @@ export class HomePage {
   imageUrl = 'assets/firebase.png';
   imageUrl2 = 'assets/firebase2.png';
   ocrResult : any;
-  captureProgress = 0;
+  captureProgress : any;
   worker:any;
 
   text: any;
@@ -74,27 +74,7 @@ export class HomePage {
     }
   }
 
-  /*parseTextOCR() {
-    this.result = {};
-    const regex = /apiKey: "([^"]+)"[\s\S]*authDomain: "([^"]+)"[\s\S]*projectId: "([^"]+)"[\s\S]*storageBucket: "([^"]+)"[\s\S]*messagingSenderId: "([^"]+)"[\s\S]*appId: "([^"]+)"/;
-    //const matches = this.text.match(regex);
-    const matches = this.ocrResult.match(regex);
-    console.log('Match: ', matches);
-    console.log('Text: ', this.ocrResult);
-
-    if (matches && matches.length === 7) {
-      console.log('if');
-      this.keywords.forEach((keyword, index) => {
-        this.result[keyword] = matches[index + 1];
-      });
-    } else {
-      // Falls keine Übereinstimmung gefunden wurde, setze das Ergebnis auf null oder zeige eine Fehlermeldung an.
-      this.result = null;
-    }
-    console.log("Result: ", this.result);
-    this.saveDataInJson(this.result);
-  }*/
-
+  //Der Extrachierter Text wird Hier bearbeitet
   parseTextOCR() {
     //const regex = /apiKey: "([^"]+)"[\s\S]*authDomain: "([^"]+)"[\s\S]/;
     const regex = /apiKey: "([^"]+)"[\s\S]*authDomain: "([^"]+)"[\s\S]*projectId: "([^"]+)"[\s\S]*storageBucket: "([^"]+)"[\s\S]*messagingSenderId: "([^"]+)"[\s\S]*appId: "([^"]+)"/;
@@ -122,44 +102,15 @@ export class HomePage {
         messagingSenderId: firebaseConfig.messagingSenderId,
         appId: firebaseConfig.appId,
       };
-      this.result = `
-             apiKey: "${firebaseConfig.apiKey}",
-             authDomain: "${firebaseConfig.authDomain}",
-             projectId: "${firebaseConfig.projectId}",
-             storageBucket: "${firebaseConfig.storageBucket}",
-             messagingSenderId: "${firebaseConfig.messagingSenderId}",
-             appId: "${firebaseConfig.appId}"
-      `;
 
-      //this.saveDataInJson(data);
       this.showFirebaseSettingData(data);
     } else {
       // Falls keine Übereinstimmung gefunden wurde, setze das Ergebnis auf null oder zeige eine Fehlermeldung an.
       this.result = null;
     }
-
-
   }
 
-  parseText() {
-    this.result = {};
-    const regex = /apiKey: "([^"]+)"[\s\S]*authDomain: "([^"]+)"[\s\S]*projectId: "([^"]+)"[\s\S]*storageBucket: "([^"]+)"[\s\S]*messagingSenderId: "([^"]+)"[\s\S]*appId: "([^"]+)"/;
-    const matches = this.text.match(regex);
-    console.log('Match: ', matches);
-    console.log('Text: ', this.text);
-
-    if (matches && matches.length === 7) {
-      this.keywords.forEach((keyword, index) => {
-        this.result[keyword] = matches[index + 1];
-      });
-    } else {
-      // Falls keine Übereinstimmung gefunden wurde, setze das Ergebnis auf null oder zeige eine Fehlermeldung an.
-      this.result = null;
-    }
-    console.log("Result: ", this.result);
-    this.saveDataInJson(this.result);
-  }
-
+  //Hier werden die gespeicherten Firebase Config aus JSON geladen
   async editData() {
     try {
       const fileName = 'data.json';
@@ -181,6 +132,8 @@ export class HomePage {
       console.error('Error reading data:', error);
     }
   }
+
+  //Es werden die gefunden Firebase configurationen in die entsprechenden Felder hinzugefügt
   showFirebaseSettingData(data:any){
     this.apiKey = data.apiKey;
     this.authDomain = data.authDomain;
@@ -189,23 +142,9 @@ export class HomePage {
     this.messagingSenderId = data.messagingSenderId;
     this.appId = data.appId;
   }
-  async createFolder(){
-    try {
-      const fileName = '/data.json';
-      //erstellt ein verzeichnis
-      await Filesystem.mkdir({
-        path: '/dataOxil',
-        directory: Directory.Documents,
-        recursive: true // Erstellt auch übergeordnete Verzeichnisse, falls erforderlich
-      });
 
-      console.log('Create Folder successfully!');
-    } catch (error) {
-      console.error('Error Create Folder:', error);
-    }
-  }
-
-  async createFolder2() {
+  // es wird ein Ordnen erstellt damit später in dem Ordner die Json-Datei mit Firebase configurtion gespeichert werden kann
+  async createFolder() {
     try {
       const folderPath = '/dataOxil';
       const parentDir = Directory.Documents;
@@ -231,56 +170,16 @@ export class HomePage {
       console.error('Error creating folder:', error);
     }
   }
-
+  //Es wird aus dem Bild entsprechender Text extrachiert
   async recognizeImage() {
-    const result = await this.worker.recognize(this.imageUrl2);
+    const result = await this.worker.recognize(this.imageUrl);
     this.ocrResult = result.data.text;
     console.log("Picture Result: ", this.ocrResult);
 
-    //await this.saveDataInJson(this.ocrResult);
     this.parseTextOCR();
   }
 
-  async saveDataInJson(data:any) {
-
-    const jsonData = JSON.stringify(data);
-
-    const alert = await this.alertCtrl.create({
-      cssClass: 'alt',
-      header: 'Firebase Settings Overwrite',
-      message: ` Do you want to save new Firebase settings? Old Firebase settings will be <strong>overwriten</strong>!`,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'danger',
-          handler: () => {
-
-          }
-        }, {
-          text: 'Overwrite',
-          handler: () => {
-            try {
-              const fileName = '/data.json';
-
-              Filesystem.writeFile({
-                path: fileName,
-                data: jsonData,
-                directory: Directory.Data,
-                encoding: Encoding.UTF8,
-              });
-              this.editData();
-              console.log('Data saved successfully!');
-            } catch (error) {
-              console.error('Error saving data:', error);
-            }
-          }
-        }
-      ]
-    });
-    await alert.present();
-
-  }
+  // Hier werden die Daten aus den Eingegebenen Felder in Json-File gespeichert
   async saveData() {
      const data = {
        apiKey: this.apiKey,
@@ -328,6 +227,4 @@ export class HomePage {
     });
     await alert.present();
   }
-
-
 }
