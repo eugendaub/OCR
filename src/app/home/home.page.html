@@ -29,10 +29,9 @@
   </div>
   <div *ngIf="result">
     <h4>Ergebnis:</h4>
-    <ul>
-      <li *ngFor="let keyword of keywords">{{ keyword }}: {{ result[keyword] }}</li>
-    </ul>
+    <pre>{{ocrResult}}</pre>
   </div>
+  <ion-button (click)="editData()">Load Data</ion-button>
 
   <form (ngSubmit)="saveData()">
 
@@ -62,5 +61,7 @@
     </ion-item>
     <ion-button type="submit" expand="full" class="buttonsjopta" color="#a2d2ff">Save Firebase Settings</ion-button>
   </form>
+
+  <ion-button (click)="createFolder2()">Folder erstellen</ion-button>
 
 </ion-content>
